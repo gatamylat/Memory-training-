@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Память Pro">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' fill='%23FF6B35'/%3E%3Ctext x='90' y='120' font-family='-apple-system' font-size='100' fill='white' text-anchor='middle'%3E🧠%3C/text%3E%3C/svg%3E">
+    <link rel="manifest" href="manifest.json">
+    <title>Научная тренировка памяти - Полная версия</title>
+    <style>
+        /* Системная типографика Apple Human Interface Guidelines */
+        :root {
+            /* Цвета - минимальная палитра */
+            --pure-white: #FFFFFF;
+            --background: #FAFAFA;
+            --surface: #FFFFFF;
+            --text-primary: #1C1C1E;
+            --text-secondary: #8E8E93;
+            --text-tertiary: #C7C7CC;
+            --separator: #E5E5EA;
+            --separator-light: #F2F2F7;
+            
+            /* Акцент - оранжевый */
+            --accent: #FF6B35;
+            --accent-hover: #E55A2B;
+            --accent-light: rgba(255, 107, 53, 0.08);
+            --accent-medium: rgba(255, 107, 53, 0.15);
+            
+            /* Семантические цвета */
+            --success: #34C759;
+            --warning: #FF9500;
+            --error: #FF3B30;
+            
+            /* Отступы - сетка 8pt */
+            --space-xs: 4px;
+            --space-s: 8px;
+            --space-m: 16px;
+            --space-l: 24px;
+            --space-xl: 32px;
+            --space-xxl: 48px;
+            --space-xxxl: 64px;
+            
+            /* Типографика */
+            --font-system: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+            --font-mono: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+            
+            /* Анимации */
+            --transition-fast: 0.15s ease-out;
+            --transition-normal: 0.25s ease-out;
+            --transition-slow: 0.35s ease-out;
+            
+            /* Тени */
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.05);
+            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.08);
+            --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.12);
+            
+            /* Радиус */
+            --radius-s: 6px;
+            --radius-m: 10px;
+            --radius-l: 14px;
+            --radius-xl: 20px;
+        }
+        
+        /* Сброс стилей */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        /* База */
+        html {
+            font-size: 16px;
+            -webkit-text-size-adjust: 100%;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: var(--font-system);
+            font-size: 1rem;
+            line-height: 1.5;
+            color: var(--text-primary);
+            background: var(--background);
+            overflow-x: hidden;
+        }
+        
+        /* Типографика */
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            line-height: 1.2;
+        }
+        
+        h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            line-height: 1.3;
+        }
+        
+        h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+        
+        .caption {
+            font-size: 0.875rem;
+            line-height: 1.4;
+            color: var(--text-secondary);
+        }
+        
+        /* Макет */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--space-m);
+        }
+        
+        /* Навигация - компактная и прозрачная */
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(250, 250, 250, 0.72);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(229, 229, 234, 0.6);
+        }
+        
+        .nav-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 48px;
+            padding: var(--space-s) 0;
+        }
+        
+        /* Сегментированный контроль */
+        .segmented-control {
+            display: inline-flex;
+            background: rgba(242, 242, 247, 0.8);
+            border-radius: var(--radius-m);
+            padding: 2px;
+            position: relative;
+            max-width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+        
+        .segmented-control::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .segment {
+            padding: var(--space-xs) var(--space-s);
+            border-radius: var(--radius-s);
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            white-space: nowrap;
+            position: relative;
+            z-index: 1;
+            font-family: var(--font-system);
+        }
+        
+        .segment.active {
+            color: var(--text-primary);
+            background: var(--pure-white);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+        
+        /* Основной контент */
+        main {
+            padding: var(--space-l) 0 var(--space-xxxl);
+            min-height: calc(100vh - 48px);
+        }
+        
+        /* Вводный блок */
+        .intro-section {
+            background: linear-gradient(135deg, var(--accent-light) 0%, rgba(255, 107, 53, 0.02) 100%);
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+            margin-bottom: var(--space-xl);
+            border: 1px solid var(--separator-light);
+        }
+        
+        .intro-section h2 {
+            color: var(--accent);
+            margin-bottom: var(--space-m);
+        }
+        
+        .intro-section p {
+            line-height: 1.6;
+            margin-bottom: var(--space-m);
+        }
+        
+        .intro-section ul {
+            list-style: none;
+            padding-left: var(--space-l);
+        }
+        
+        .intro-section li {
+            position: relative;
+            margin-bottom: var(--space-s);
+        }
+        
+        .intro-section li::before {
+            content: '→';
+            position: absolute;
+            left: -20px;
+            color: var(--accent);
+            font-weight: bold;
+        }
+        
+        /* Карточки */
+        .card {
+            background: var(--surface);
+            border-radius: var(--radius-l);
+            padding: var(--space-l);
+            box-shadow: var(--shadow-sm);
+            transition: all var(--transition-normal);
+            position: relative;
+            overflow: hidden;
+            margin-bottom: var(--space-m);
+        }
+        
+        .card:hover {
+            box-shadow: var(--shadow-md);
+        }
+        
+        /* Кнопки */
+        .button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-s) var(--space-m);
+            border-radius: var(--radius-s);
+            font-size: 0.9375rem;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            white-space: nowrap;
+            text-decoration: none;
+            gap: var(--space-xs);
+            font-family: var(--font-system);
+            min-height: 44px;
+        }
+        
+        .button-primary {
+            background: var(--accent);
+            color: var(--pure-white);
+        }
+        
+        .button-primary:hover {
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+        }
+        
+        .button-primary:active {
+            transform: translateY(0);
+        }
+        
+        .button-secondary {
+            background: var(--separator-light);
+            color: var(--text-primary);
+        }
+        
+        .button-secondary:hover {
+            background: var(--separator);
+        }
+        
+        /* Сетка статистики - компактная */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: var(--space-s);
+            margin: var(--space-l) 0;
+        }
+        
+        .stat-card {
+            background: var(--surface);
+            padding: var(--space-m);
+            border-radius: var(--radius-l);
+            border: 1px solid var(--separator-light);
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--accent);
+            letter-spacing: -0.02em;
+        }
+        
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+        
+        /* Список упражнений */
+        .exercise-grid {
+            display: grid;
+            gap: var(--space-m);
+        }
+        
+        .exercise-item {
+            display: flex;
+            align-items: center;
+            padding: var(--space-m);
+            background: var(--surface);
+            border-radius: var(--radius-m);
+            border: 1px solid var(--separator-light);
+            transition: all var(--transition-fast);
+            cursor: pointer;
+            min-height: 60px;
+        }
+        
+        .exercise-item:hover {
+            border-color: var(--accent);
+            background: var(--accent-light);
+        }
+        
+        .exercise-item.completed {
+            border-color: var(--success);
+            background: rgba(52, 199, 89, 0.08);
+        }
+        
+        .exercise-checkbox {
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--separator);
+            border-radius: 50%;
+            margin-right: var(--space-m);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-fast);
+            flex-shrink: 0;
+        }
+        
+        .exercise-item.completed .exercise-checkbox {
+            background: var(--success);
+            border-color: var(--success);
+        }
+        
+        .exercise-item.completed .exercise-checkbox::after {
+            content: '✓';
+            color: white;
+            font-size: 0.875rem;
+        }
+        
+        /* Память грид */
+        .memory-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-s);
+            max-width: 320px;
+            margin: var(--space-xl) auto;
+        }
+        
+        .memory-cell {
+            aspect-ratio: 1;
+            background: var(--surface);
+            border: 1px solid var(--separator);
+            border-radius: var(--radius-m);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        
+        /* Таблицы - адаптивные */
+        .table-wrapper {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: var(--space-l) 0;
+        }
+        
+        .schedule-table {
+            width: 100%;
+            min-width: 500px;
+            border-collapse: collapse;
+            background: var(--surface);
+            border-radius: var(--radius-l);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .schedule-table th {
+            background: var(--accent);
+            color: var(--pure-white);
+            padding: var(--space-s);
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        
+        .schedule-table td {
+            padding: var(--space-s);
+            border-bottom: 1px solid var(--separator-light);
+            font-size: 0.875rem;
+        }
+        
+        /* Контент вкладок */
+        .tab-content {
+            display: none;
+            animation: fadeIn var(--transition-slow);
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 var(--space-s);
+            }
+            
+            .nav-content {
+                min-height: 44px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            h2 {
+                font-size: 1.125rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            /* Кнопки под большой палец */
+            .button {
+                min-height: 48px;
+                font-size: 1rem;
+                width: 100%;
+            }
+            
+            .exercise-item {
+                padding-right: var(--space-l);
+            }
+            
+            .schedule-table {
+                font-size: 0.8125rem;
+            }
+            
+            .schedule-table th,
+            .schedule-table td {
+                padding: var(--space-xs);
+            }
+        }
+        
+        @media (max-width: 375px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .segment {
+                padding: var(--space-xs) var(--space-xs);
+                font-size: 0.8125rem;
+            }
+        }
+        
+        /* Тёмный режим */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --background: #000000;
+                --surface: #1C1C1E;
+                --text-primary: #FFFFFF;
+                --text-secondary: #AEAEB2;
+                --text-tertiary: #636366;
+                --separator: #38383A;
+                --separator-light: #2C2C2E;
+                --accent-light: rgba(255, 107, 53, 0.15);
+                --accent-medium: rgba(255, 107, 53, 0.25);
+            }
+            
+            nav {
+                background: rgba(28, 28, 30, 0.72);
+            }
+            
+            .segmented-control {
+                background: rgba(44, 44, 46, 0.8);
+            }
+            
+            .segment.active {
+                background: var(--separator);
+            }
+        }
+        
+        /* Утилиты */
+        .hidden { display: none !important; }
+        .text-center { text-align: center; }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <div class="nav-content">
+                <div class="segmented-control">
+                    <button class="segment active" onclick="switchTab('intro')">О методе</button>
+                    <button class="segment" onclick="switchTab('today')">Сегодня</button>
+                    <button class="segment" onclick="switchTab('exercises')">Упражнения</button>
+                    <button class="segment" onclick="switchTab('techniques')">Техники</button>
+                    <button class="segment" onclick="switchTab('plan')">План</button>
+                    <button class="segment" onclick="switchTab('tips')">Советы</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <main>
+        <div class="container">
+            <!-- Вкладка "О методе" -->
+            <div id="intro" class="tab-content active">
+                <div class="intro-section">
+                    <h2>🔬 Научная основа программы</h2>
+                    <p>
+                        Программа основана на исследованиях профессора Рюты Кавашимы (Университет Тохоку, Япония).
+                        Методика доказала эффективность в 100+ исследованиях с использованием функциональной МРТ.
+                    </p>
+                    
+                    <h3>Ключевые методики:</h3>
+                    <ul>
+                        <li><strong>Активация префронтальной коры</strong> через арифметические вычисления</li>
+                        <li><strong>Тест Струпа</strong> для исполнительного контроля</li>
+                        <li><strong>Trail Making Test</strong> для когнитивной гибкости</li>
+                        <li><strong>N-back тесты</strong> для рабочей памяти</li>
+                        <li><strong>Метод локусов</strong> из античных мнемотехник</li>
+                        <li><strong>Интервальное повторение</strong> по кривой Эббингауза</li>
+                    </ul>
+                    
+                    <h3>Доказанные результаты:</h3>
+                    <ul>
+                        <li>Снижение "возраста мозга" на 5-20 лет за 4 недели</li>
+                        <li>Увеличение рабочей памяти на 40-60%</li>
+                        <li>Ускорение обработки информации на 25-35%</li>
+                        <li>Рост объёма серого вещества в префронтальной коре</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Вкладка "Сегодня" -->
+            <div id="today" class="tab-content">
+                <h1>Ежедневная программа</h1>
+                <p class="caption" id="dateDisplay"></p>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="brainAge">—</div>
+                        <div class="stat-label">Возраст мозга</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="streak">0</div>
+                        <div class="stat-label">Дней подряд</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="accuracy">—</div>
+                        <div class="stat-label">Точность</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalTime">0</div>
+                        <div class="stat-label">Минут сегодня</div>
+                    </div>
+                </div>
+                
+                <h2 style="margin-top: 24px;">Упражнения на сегодня</h2>
+                <div class="exercise-grid">
+                    <div class="exercise-item" data-exercise="reading" onclick="startExercise('reading')">
+                        <div class="exercise-checkbox"></div>
+                        <div>
+                            <div>📖 Скорочтение вслух</div>
+                            <div class="caption">2 минуты</div>
+                        </div>
+                    </div>
+                    <div class="exercise-item" data-exercise="math" onclick="startExercise('math')">
+                        <div class="exercise-checkbox"></div>
+                        <div>
+                            <div>🧮 30 быстрых вычислений</div>
+                            <div class="caption">2 минуты</div>
+                        </div>
+                    </div>
+                    <div class="exercise-item" data-exercise="stroop" onclick="startExercise('stroop')">
+                        <div class="exercise-checkbox"></div>
+                        <div>
+                            <div>🎨 Тест Струпа</div>
+                            <div class="caption">3 минуты</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Вкладка "Упражнения" -->
+            <div id="exercises" class="tab-content">
+                <h1>Тренажёры памяти</h1>
+                
+                <div id="exerciseContainer"></div>
+            </div>
+            
+            <!-- Вкладка "Техники" -->
+            <div id="techniques" class="tab-content">
+                <h1>Продвинутые техники</h1>
+                <!-- Содержимое техник -->
+            </div>
+            
+            <!-- Вкладка "План" -->
+            <div id="plan" class="tab-content">
+                <h1>План на 4 недели</h1>
+                
+                <div class="table-wrapper">
+                    <table class="schedule-table">
+                        <thead>
+                            <tr>
+                                <th>Неделя</th>
+                                <th>Фокус</th>
+                                <th>Упражнения</th>
+                                <th>Время</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>База</td>
+                                <td>Чтение, Струп</td>
+                                <td>5 мин</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>Память</td>
+                                <td>N-back, числа</td>
+                                <td>8 мин</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>Скорость</td>
+                                <td>Вычисления</td>
+                                <td>10 мин</td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>Интеграция</td>
+                                <td>Все техники</td>
+                                <td>15 мин</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="stats-grid" style="margin-top: 24px;">
+                    <div class="stat-card">
+                        <div class="stat-value">-10</div>
+                        <div class="stat-label">лет</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">+60%</div>
+                        <div class="stat-label">память</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">+35%</div>
+                        <div class="stat-label">скорость</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">+50%</div>
+                        <div class="stat-label">фокус</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Вкладка "Советы" -->
+            <div id="tips" class="tab-content">
+                <h1>Советы</h1>
+                <!-- Содержимое советов -->
+            </div>
+        </div>
+    </main>
+    
+    <script>
+        function switchTab(tabName) {
+            document.querySelectorAll('.segment').forEach(seg => seg.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+        }
+        
+        function startExercise(type) {
+            // Переключаемся на вкладку упражнений
+            document.querySelectorAll('.segment').forEach(seg => seg.classList.remove('active'));
+            document.querySelectorAll('.segment')[2].classList.add('active');
+            
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById('exercises').classList.add('active');
+            
+            const container = document.getElementById('exerciseContainer');
+            
+            // Запускаем упражнение
+            if (type === 'reading') {
+                container.innerHTML = '<div class="card"><h2>📖 Таймер чтения</h2><div style="font-size: 3rem; text-align: center; padding: 24px; font-family: monospace;" id="timer">00:00</div><button class="button button-primary" onclick="startTimer()">Старт</button></div>';
+            } else if (type === 'math') {
+                startMath();
+            } else if (type === 'stroop') {
+                startStroop();
+            }
+        }
+        
+        let timerInterval = null;
+        let timerSeconds = 0;
+        
+        function startTimer() {
+            timerSeconds = 0;
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timerSeconds++;
+                const mins = Math.floor(timerSeconds / 60);
+                const secs = timerSeconds % 60;
+                document.getElementById('timer').textContent = 
+                    String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+            }, 1000);
+        }
+        
+        function startMath() {
+            const container = document.getElementById('exerciseContainer');
+            container.innerHTML = '<div class="card"><h2>🧮 30 быстрых вычислений</h2><div style="font-size: 2rem; text-align: center; padding: 24px;" id="problem">5 + 7</div><input type="number" style="width: 200px; padding: 12px; font-size: 1.5rem; text-align: center; border: 2px solid #E5E5EA; border-radius: 8px;" id="answer"><div style="text-align: center; margin-top: 16px;">Решено: <span id="solved">0</span> / 30</div></div>';
+            
+            let solved = 0;
+            function nextProblem() {
+                if (solved >= 30) {
+                    alert('Отлично! Все 30 примеров решены!');
+                    markCompleted('math');
+                    return;
+                }
+                
+                const a = Math.floor(Math.random() * 20) + 1;
+                const b = Math.floor(Math.random() * 20) + 1;
+                const op = ['+', '-'][Math.floor(Math.random() * 2)];
+                
+                document.getElementById('problem').textContent = `${a} ${op} ${b}`;
+                document.getElementById('answer').value = '';
+                document.getElementById('answer').focus();
+                
+                const correctAnswer = op === '+' ? a + b : a - b;
+                
+                document.getElementById('answer').onkeypress = function(e) {
+                    if (e.key === 'Enter') {
+                        if (parseInt(this.value) === correctAnswer) {
+                            solved++;
+                            document.getElementById('solved').textContent = solved;
+                            nextProblem();
+                        }
+                    }
+                };
+            }
+            
+            nextProblem();
+        }
+        
+        function startStroop() {
+            const container = document.getElementById('exerciseContainer');
+            const words = ['КРАСНЫЙ', 'СИНИЙ', 'ЗЕЛЁНЫЙ', 'ЖЁЛТЫЙ'];
+            const colors = ['#FF3B30', '#007AFF', '#34C759', '#FFCC00'];
+            
+            let correct = 0;
+            let total = 0;
+            
+            function nextStroop() {
+                if (total >= 20) {
+                    alert(`Тест завершён! Точность: ${Math.round(correct/total*100)}%`);
+                    markCompleted('stroop');
+                    return;
+                }
+                
+                const word = words[Math.floor(Math.random() * words.length)];
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                
+                container.innerHTML = `
+                    <div class="card">
+                        <h2>🎨 Тест Струпа</h2>
+                        <p style="text-align: center;">Выберите ЦВЕТ слова, а не его значение</p>
+                        <div style="font-size: 3rem; font-weight: bold; text-align: center; padding: 24px; color: ${color};">
+                            ${word}
+                        </div>
+                        <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+                            <button class="button button-secondary" onclick="checkStroop('${color}', '#FF3B30')">Красный</button>
+                            <button class="button button-secondary" onclick="checkStroop('${color}', '#007AFF')">Синий</button>
+                            <button class="button button-secondary" onclick="checkStroop('${color}', '#34C759')">Зелёный</button>
+                            <button class="button button-secondary" onclick="checkStroop('${color}', '#FFCC00')">Жёлтый</button>
+                        </div>
+                        <div style="text-align: center; margin-top: 16px;">
+                            Правильных: ${correct} / ${total}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            window.checkStroop = function(correctColor, selectedColor) {
+                total++;
+                if (correctColor === selectedColor) correct++;
+                nextStroop();
+            };
+            
+            nextStroop();
+        }
+        
+        function markCompleted(exercise) {
+            const item = document.querySelector(`[data-exercise="${exercise}"]`);
+            if (item) {
+                item.classList.add('completed');
+            }
+        }
+        
+        // Инициализация
+        document.addEventListener('DOMContentLoaded', () => {
+            const today = new Date();
+            document.getElementById('dateDisplay').textContent = 
+                today.toLocaleDateString('ru-RU', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        });
+        
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').catch(err => console.log('SW registration failed'));
+        }
+    </script>
+</body>
+</html>
